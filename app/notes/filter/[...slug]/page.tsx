@@ -1,4 +1,3 @@
-// app/notes/filter/[...slug]/page.tsx
 import NotesClient from './Notes.client';
 import { fetchNotes } from '@/lib/api';
 import { NoteTag } from '@/types/note';
@@ -24,7 +23,6 @@ export default async function NotesPage(props: NotesPageProps) {
   const params = await Promise.resolve(props.params);
   const slug = params?.slug ?? [];
 
-  // Проверяем, что тег допустимый
   const tag =
     slug[0] && slug[0] !== 'All' && allowedTags.includes(slug[0] as NoteTag)
       ? slug[0]

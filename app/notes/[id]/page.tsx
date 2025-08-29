@@ -10,7 +10,8 @@ interface NotePageProps {
   params: { id: string };
 }
 
-export default async function NotePage({ params }: NotePageProps) {
+export default async function NotePage(props: NotePageProps) {
+  const params = await Promise.resolve(props.params);
   const id = params.id;
   const queryClient = new QueryClient();
 
