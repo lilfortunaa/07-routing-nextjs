@@ -1,4 +1,4 @@
-import styles from './page.module.css';
+import styles from './../app/notes/filter/[...slug]/page.module.css';
 
 export default function HomePage() {
   return (

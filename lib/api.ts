@@ -16,6 +16,7 @@ export interface FetchNotesParams {
   page?: number;
   perPage?: number;
   search?: string;
+  tag?: string;
 }
 
 export interface FetchNotesResponse {
@@ -29,10 +30,23 @@ export const fetchNotes = async ({
   page = 1,
   perPage = 12,
   search = '',
+  tag,
 }: FetchNotesParams): Promise<FetchNotesResponse> => {
+  const params: Record<string, string | number> = {
+    page,
+    perPage,
+  };
+
+  if (search) params.search = search;
+  if (tag && tag !== 'All') params.tag = tag;
+
+  const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
+  if (!token) throw new Error('Authorization token is missing');
+
   const res: AxiosResponse<FetchNotesResponse> = await api.get('/notes', {
-    params: { page, perPage, search },
+    params,
   });
+
   return {
     ...res.data,
     page,
