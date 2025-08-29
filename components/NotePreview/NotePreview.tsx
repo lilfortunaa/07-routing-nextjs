@@ -2,6 +2,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Modal from '../Modal/Modal';
+import type { Note } from '@/types/note';
 
 interface NotePreviewProps {
   noteId: string;
@@ -9,12 +10,12 @@ interface NotePreviewProps {
 
 export default function NotePreview({ noteId }: NotePreviewProps) {
   const router = useRouter();
-  const [note, setNote] = useState<any>(null);
+  const [note, setNote] = useState<Note | null>(null);
 
   useEffect(() => {
     const fetchNote = async () => {
       const res = await fetch(`/api/notes/${noteId}`);
-      const data = await res.json();
+      const data: Note = await res.json();
       setNote(data);
     };
     fetchNote();
