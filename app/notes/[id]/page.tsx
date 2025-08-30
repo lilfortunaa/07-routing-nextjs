@@ -1,6 +1,6 @@
 import { fetchNoteById } from '@/lib/api';
 import { Note } from '@/types/note';
-import NoteDetailsClient from '../../../components/NoteDetails/NoteDetails.client';
+import NoteDetailsClient from './NoteDetails.client';
 import Modal from '../../../components/Modal/Modal';
 
 export default async function NotePage({ params }: { params: { id: string } }) {
