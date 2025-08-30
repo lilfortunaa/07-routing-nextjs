@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
 import { fetchNotes } from '@/lib/api';
 import NoteList from '@/components/NoteList/NoteList';
@@ -9,6 +9,8 @@ import Pagination from '@/components/Pagination/Pagination';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Modal from '@/components/Modal/Modal';
 import NoteForm from '@/components/NoteForm/NoteForm';
+import NoteModalClient from '@/app/@modal/(.)notes/[id]/NoteModalClient';
+import type { Note } from '@/types/note';
 
 interface NotesClientProps {
   tag?: string;
@@ -18,7 +20,10 @@ export default function NotesClient({ tag }: NotesClientProps) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebounce(search, 500);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
   useEffect(() => {
     setPage(1);
@@ -33,7 +38,6 @@ export default function NotesClient({ tag }: NotesClientProps) {
         search: debouncedSearch,
         tag: tag && tag !== 'All' ? tag : undefined,
       }),
-    placeholderData: keepPreviousData,
   });
 
   return (
@@ -47,19 +51,31 @@ export default function NotesClient({ tag }: NotesClientProps) {
             currentPage={page}
           />
         )}
-        <button onClick={() => setIsModalOpen(true)}>Create note +</button>
+        <button onClick={() => setIsCreateModalOpen(true)}>
+          Create note +
+        </button>
       </header>
 
       {isLoading && <p>Loading...</p>}
       {error && <p>Could not fetch notes.</p>}
-      {data && data.notes.length > 0 && <NoteList notes={data.notes} />}
+      {data && data.notes.length > 0 && (
+        <NoteList notes={data.notes} onView={note => setSelectedNote(note) } />
+      )}
       {data && data.notes.length === 0 && <p>No notes found.</p>}
 
-      {isModalOpen && (
-        <Modal onClose={() => setIsModalOpen(false)}>
-          <NoteForm onCancel={() => setIsModalOpen(false)} />
+      {isCreateModalOpen && (
+        <Modal onClose={() => setIsCreateModalOpen(false)}>
+          <NoteForm onCancel={() => setIsCreateModalOpen(false)} />
+        </Modal>
+      )}
+
+      {selectedNote && (
+        <Modal onClose={() => setSelectedNote(null)}>
+          <NoteModalClient note={selectedNote} />
         </Modal>
       )}
     </div>
   );
+  
 }
+
