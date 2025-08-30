@@ -1,17 +1,17 @@
+import { fetchNoteById } from '@/lib/api';
+import { Note } from '@/types/note';
 import NoteDetailsClient from '../../../components/NoteDetails/NoteDetails.client';
 import Modal from '../../../components/Modal/Modal';
 
 export default async function NotePage({ params }: { params: { id: string } }) {
-  const { id } = await Promise.resolve(params);
+  const { id } = params;
 
-  const isDirect = true;
-  if (isDirect) {
-    return (
-      <Modal onClose={() => window.history.back()}>
-        <NoteDetailsClient id={id} />
-      </Modal>
-    );
-  }
+ 
+  const note: Note = await fetchNoteById(id);
 
-  return <NoteDetailsClient id={id} />;
+  return (
+    <Modal onClose={() => window.history.back()}>
+      <NoteDetailsClient note={note} />
+    </Modal>
+  );
 }
