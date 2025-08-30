@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import Modal from '../Modal/Modal';
+import Modal from '../../../../components/Modal/Modal';
 import type { Note } from '@/types/note';
 
 interface NotePreviewProps {
