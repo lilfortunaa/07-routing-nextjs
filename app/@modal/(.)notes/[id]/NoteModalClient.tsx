@@ -1,37 +1,57 @@
 'use client';
-import { useQuery } from '@tanstack/react-query';
-import { useState, useEffect  } from 'react';
+import { useState, useEffect } from 'react';
+import { QueryClient, QueryClientProvider, useQuery, hydrate } from '@tanstack/react-query';
 import Modal from '@/components/Modal/Modal';
 import NoteDetailsClient from '@/app/notes/[id]/NoteDetails.client';
 import { fetchNoteById } from '@/lib/api';
 import type { Note } from '@/types/note';
+import { useRouter } from 'next/navigation';
 
 interface Props {
-   noteId: string;
+  noteId: string;
+  dehydratedState: unknown; 
 }
 
-export default function NoteModalClient({ noteId }: Props) {
-  const [isOpen, setIsOpen] = useState(true); 
+export default function NoteModalClient({ noteId, dehydratedState }: Props) {
+  const [isOpen, setIsOpen] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     setIsOpen(true);
   }, [noteId]);
 
-  const { data: note, isLoading, isError } = useQuery<Note, Error>({
-    queryKey: ['note', noteId],
-    queryFn: () => fetchNoteById(noteId),
-  });
 
-  const closeModal = () => setIsOpen(false); 
+  const queryClient = new QueryClient();
 
-  if (!isOpen) return null; 
 
-  if (isLoading) return null;
-  if (isError || !note) return <div>Error loading note</div>;
+  hydrate(queryClient, dehydratedState);
+
+
+  if (!isOpen) {
+    router.back();
+    return null;
+  }
+
 
   return (
-    <Modal onClose={closeModal}>
-      <button onClick={closeModal} style={{ float: 'right' }}>Close</button>
+    <QueryClientProvider client={queryClient}>
+      <NoteModalContent noteId={noteId} onClose={() => setIsOpen(false)} />
+    </QueryClientProvider>
+  );
+}
+
+function NoteModalContent({ noteId, onClose }: { noteId: string; onClose: () => void }) {
+  const { data: note } = useQuery<Note>({
+    queryKey: ['note', noteId],
+    queryFn: () => fetchNoteById(noteId),
+    refetchOnMount: false,
+  });
+
+  if (!note) return <div>Loading...</div>;
+
+  return (
+    <Modal onClose={onClose}>
+      <button onClick={onClose} style={{ float: 'right' }}>Close</button>
       <NoteDetailsClient note={note} />
     </Modal>
   );

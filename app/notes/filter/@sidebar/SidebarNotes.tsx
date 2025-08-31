@@ -13,12 +13,13 @@ const tags: (NoteTag | 'All')[] = [
   'Shopping',
 ];
 
-export default function SidebarMenu() {
+export default function SidebarNotes() {
   const pathname = usePathname() ?? '';
 
   const activeTag = (() => {
     const match = pathname.match(/^\/notes\/filter\/([^/]+)/);
-    return match ? decodeURIComponent(match[1]) : pathname === '/notes' ? 'All' : '';
+    const current = match ? decodeURIComponent(match[1]) : pathname === '/notes' ? 'All' : '';
+    return tags.includes(current as NoteTag | 'All') ? current : '';
   })();
 
   return (
@@ -28,6 +29,7 @@ export default function SidebarMenu() {
         <li className={css.menuItem}>
           <Link
             href="/notes"
+            aria-current={activeTag === 'All' ? 'page' : undefined}
             className={`${css.menuLink} ${activeTag === 'All' ? css.active : ''}`}
           >
             All
@@ -38,6 +40,7 @@ export default function SidebarMenu() {
           <li key={tag} className={css.menuItem}>
             <Link
               href={`/notes/filter/${tag}`}
+              aria-current={activeTag === tag ? 'page' : undefined}
               className={`${css.menuLink} ${activeTag === tag ? css.active : ''}`}
             >
               {tag}
