@@ -5,6 +5,8 @@ import type { Note } from '../types/note';
 const BASE_URL = 'https://notehub-public.goit.study/api';
 const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
 
+
+
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
@@ -32,15 +34,11 @@ export const fetchNotes = async ({
   search = '',
   tag,
 }: FetchNotesParams): Promise<FetchNotesResponse> => {
-  const params: Record<string, string | number> = {
-    page,
-    perPage,
-  };
+  const params: Record<string, string | number> = { page, perPage };
 
   if (search) params.search = search;
-  if (tag && tag !== 'All') params.tag = tag;
+  if (tag && tag !== 'All') params.tag = tag; 
 
-  const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
   if (!token) throw new Error('Authorization token is missing');
 
   const res: AxiosResponse<FetchNotesResponse> = await api.get('/notes', {

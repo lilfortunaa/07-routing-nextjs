@@ -1,15 +1,18 @@
-import { fetchNoteById } from '@/lib/api';
-import { Note } from '@/types/note';
 import NoteModalClient from './NoteModalClient';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-export default async function NotePage({ params }: Props) {
-  const id = params.id;
+export default async function NoteModalPage({ params }: Props) {
+  const { id } = await params;
 
-  const note: Note = await fetchNoteById(id);
+  const queryClient = new QueryClient();
 
-  return <NoteModalClient note={note} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <NoteModalClient noteId={id} /> 
+    </QueryClientProvider>
+  );
 }

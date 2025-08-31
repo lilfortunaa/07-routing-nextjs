@@ -1,17 +1,21 @@
 import { fetchNoteById } from '@/lib/api';
-import { Note } from '@/types/note';
 import NoteDetailsClient from './NoteDetails.client';
-import Modal from '../../../components/Modal/Modal';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-export default async function NotePage({ params }: { params: { id: string } }) {
-  const { id } = params;
+interface Props {
+  params: Promise<{ id: string }>;
+}
 
- 
-  const note: Note = await fetchNoteById(id);
+export default async function NotePage({ params }: Props) {
+  const { id } = await params;
+
+  const queryClient = new QueryClient();
+
+  const note = await fetchNoteById(id); // получаем объект note
 
   return (
-    <Modal onClose={() => window.history.back()}>
-      <NoteDetailsClient note={note} />
-    </Modal>
+    <QueryClientProvider client={queryClient}>
+      <NoteDetailsClient note={note} /> {/* передаём note, а не noteId */}
+    </QueryClientProvider>
   );
 }

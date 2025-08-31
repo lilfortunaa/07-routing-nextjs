@@ -69,11 +69,7 @@ export default function NotesClient({ tag }: NotesClientProps) {
         </Modal>
       )}
 
-      {selectedNote && (
-        <Modal onClose={() => setSelectedNote(null)}>
-          <NoteModalClient note={selectedNote} />
-        </Modal>
-      )}
+      {selectedNote && <NoteModalClient noteId={selectedNote.id} />}
     </div>
   );
   
