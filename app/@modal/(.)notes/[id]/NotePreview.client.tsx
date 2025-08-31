@@ -11,7 +11,7 @@ interface NotePreviewProps {
 
 export default function NotePreview({ noteId }: NotePreviewProps) {
   const router = useRouter();
-  const { data: note } = useQuery<Note>({
+  const { data: note, isLoading, isError } = useQuery<Note>({
     queryKey: ['note', noteId],
     queryFn: () => fetchNoteById(noteId),
     refetchOnMount: false,
@@ -21,9 +21,9 @@ export default function NotePreview({ noteId }: NotePreviewProps) {
 
   return (
     <Modal onClose={closeModal}>
-      {!note ? (
-        <p>Loading...</p>
-      ) : (
+      {isLoading && <p>Loading...</p>}
+      {isError && <p>Error loading note. Please try again.</p>}
+      {!isLoading && !isError && note && (
         <div>
           <button onClick={closeModal} style={{ float: 'right' }}>Close</button>
           <h2>{note.title}</h2>
