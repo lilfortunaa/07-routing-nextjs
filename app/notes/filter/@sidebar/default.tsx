@@ -1,19 +1,14 @@
-'use client';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { NoteTag } from '@/types/note';
 import css from './SidebarNotes.module.css';
 
 const tags: (NoteTag | 'All')[] = ['All', 'Todo', 'Work', 'Personal', 'Meeting', 'Shopping'];
 
-export default function SidebarPage() {
-  const pathname = usePathname() ?? '';
-  const activeTag = pathname.startsWith('/notes/filter/')
-    ? decodeURIComponent(pathname.split('/')[3])
-    : pathname === '/notes'
-    ? 'All'
-    : '';
+interface SidebarNotesProps {
+  activeTag?: NoteTag | 'All';
+}
 
+export default function SidebarNotes({ activeTag }: SidebarNotesProps) {
   return (
     <nav className={css.sidebarNav} aria-label="Notes sidebar">
       <ul className={css.menuList}>
