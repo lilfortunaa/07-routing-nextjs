@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 
 interface Props {
   noteId: string;
-  dehydratedState: unknown; 
+  dehydratedState?: unknown; 
 }
 
 export default function NoteModalClient({ noteId, dehydratedState }: Props) {
@@ -24,7 +24,9 @@ export default function NoteModalClient({ noteId, dehydratedState }: Props) {
   const queryClient = new QueryClient();
 
 
-  hydrate(queryClient, dehydratedState);
+  if (dehydratedState) {
+    hydrate(queryClient, dehydratedState);
+  }
 
 
   if (!isOpen) {
